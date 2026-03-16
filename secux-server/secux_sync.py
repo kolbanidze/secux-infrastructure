@@ -24,7 +24,7 @@ def sync_repo():
         "--exclude=iso/", "--exclude=images/", "--exclude=other/",
         "--exclude=archive/", "--exclude=*debug*/",
         "--exclude=pool/*-debug",
-        "--exclude=wsl/", "--exclude=sources/",
+        "--exclude=wsl/", "--exclude=sources/", '--exclude=/secux-repo/',
         SOURCE_RSYNC, str(DEST)
     ], check=True)
 
