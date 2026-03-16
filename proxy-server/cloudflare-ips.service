@@ -1,0 +1,44 @@
+# /etc/systemd/system/cloudflare-ips.service
+
+[Unit]
+Description=Update Cloudflare IP ranges
+Documentation=https://www.cloudflare.com/ips/
+After=network-online.target nginx.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/update-cloudflare-ips.sh
+StateDirectory=cloudflare-ips
+StateDirectoryMode=0700
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+
+ReadWritePaths=-/etc/nginx/snippets
+ReadWritePaths=-/etc/ufw
+ReadWritePaths=-/lib/ufw
+ReadWritePaths=-/var/lib/cloudflare-ips
+
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW CAP_DAC_OVERRIDE CAP_DAC_READ_SEARCH
+AmbientCapabilities=
+
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+
+SystemCallFilter=@system-service @network-io @privileged
+SystemCallArchitectures=native

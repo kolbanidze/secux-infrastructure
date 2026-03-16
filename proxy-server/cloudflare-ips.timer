@@ -1,0 +1,12 @@
+# /etc/systemd/system/cloudflare-ips.timer
+
+[Unit]
+Description=Update Cloudflare IPs twice a week
+
+[Timer]
+OnCalendar=Mon,Thu 04:00
+RandomizedDelaySec=1800
+Persistent=true
+
+[Install]
+WantedBy=timers.target
