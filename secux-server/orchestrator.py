@@ -34,7 +34,7 @@ def process_packages():
         if match:
             pkgname = match.group(1)
             
-            for existing in NGINX_DIR.glob(f"{pkgname}-*.pkg.tar.zst"):
+            for existing in HF_REPO_DIR.glob(f"{pkgname}-*.pkg.tar.zst"):
                 ex_match = PKG_PATTERN.match(existing.name)
                 
                 if ex_match and ex_match.group(1) == pkgname and existing.name != file.name:
@@ -68,10 +68,16 @@ def process_packages():
     status = subprocess.run(["git", "status", "--porcelain"], cwd=HF_DIR, capture_output=True, text=True)
     
     if status.stdout.strip():
+        subprocess.run(["git", "checkout", "--orphan", "temp"], cwd=HF_DIR, check=True, capture_output=True)
         subprocess.run(["git", "add", "."], cwd=HF_DIR, check=True)
         commit_msg = f"Auto-update: processed {len(packages)} packages"
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=HF_DIR, check=True, capture_output=True)
-        subprocess.run(["git", "push", "origin", "main"], cwd=HF_DIR, check=True)
+        subprocess.run(["git", "branch", "-D", "main"], cwd=HF_DIR, check=True, capture_output=True)
+        subprocess.run(["git", "branch", "-m", "main"], cwd=HF_DIR, check=True, capture_output=True)
+        subprocess.run(["git", "reflog", "expire", "--expire=now", "--all"], cwd=HF_DIR, check=True, capture_output=True)
+        subprocess.run(["git", "gc", "--prune=now"], cwd=HF_DIR, check=True, capture_output=True)
+
+        subprocess.run(["git", "push", '-f', "origin", "main"], cwd=HF_DIR, check=True)
         logging.info("Successfully pushed to HuggingFace!")
     else:
         logging.info("No changes.")
