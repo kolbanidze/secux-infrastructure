@@ -76,8 +76,8 @@ def process_packages():
         subprocess.run(["git", "branch", "-m", "main"], cwd=HF_DIR, check=True, capture_output=True)
         subprocess.run(["git", "reflog", "expire", "--expire=now", "--all"], cwd=HF_DIR, check=True, capture_output=True)
         subprocess.run(["git", "gc", "--prune=now"], cwd=HF_DIR, check=True, capture_output=True)
-
-        subprocess.run(["git", "push", '-f', "origin", "main"], cwd=HF_DIR, check=True)
+        subprocess.run(["git", "lfs", 'prune'], cwd=HF_DIR, check=True)
+        subprocess.run(['git', 'push', 'origin', 'main', '--force'], cwd=HF_DIR, check=True)
         logging.info("Successfully pushed to HuggingFace!")
     else:
         logging.info("No changes.")
