@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-sira-trust — сбор SHA-256 хешей из пакетов Arch и/или IMA, отправка в SIRA API.
-
-  sira-trust packages /var/cache/pacman/pkg
-  sira-trust ima
-  sira-trust packages /path/to/pkgs ima
-"""
 
 import os
 import sys
