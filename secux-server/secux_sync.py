@@ -17,7 +17,7 @@ REPOS = ["core", "extra", "multilib"]
 
 def sync_repo():
     print("\n[*] Запуск rsync...")
-    subprocess.run([
+    result = subprocess.run([
         "rsync", "-rlptvH", "--delete-after", "--delay-updates",
         "--safe-links",
         "--exclude=*.sig",
@@ -26,7 +26,13 @@ def sync_repo():
         "--exclude=pool/*-debug",
         "--exclude=wsl/", "--exclude=sources/", '--exclude=/secux-repo/',
         SOURCE_RSYNC, str(DEST)
-    ], check=True)
+    ], check=False)
+
+    if result.returncode not in (0, 24):
+        raise subprocess.CalledProcessError(result.returncode, result.args)
+    
+    if result.returncode == 24:
+        print("[*] rsync завершился с кодом 24, бывает, удаленные репозитории тоже обновляются.")
 
 
 def _extract_field(text, field):
